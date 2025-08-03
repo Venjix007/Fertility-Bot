@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "lib": ["deno.window"],
+    "strict": true,
+    "target": "esnext"
+  },
+  "tasks": {
+    "start": "deno run --allow-net --allow-env --allow-read --allow-write index.ts",
+    "dev": "supabase functions serve chat-with-ai --no-verify-jwt"
+  },
+  "importMap": "./import_map.json",
+  "lint": {
+    "include": ["**/*.ts"],
+    "exclude": ["node_modules"]
+  },
+  "fmt": {
+    "include": ["**/*.ts"],
+    "exclude": ["node_modules"]
+  }
+}
