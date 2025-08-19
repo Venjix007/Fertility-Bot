@@ -1,14 +1,16 @@
 # Fertility Bot
 
-A modern web application that provides fertility-related assistance and information through an interactive chat interface.
+A modern web application that provides fertility-related assistance and information through an interactive chat interface with multilingual support.
 
 ## Features
 
+- **Multilingual Support**: Chat in English, Hindi, and Gujarati
 - **User Authentication**: Secure sign-up and login functionality
 - **AI-Powered Chat**: Interactive chat interface with AI assistance
 - **Responsive Design**: Works on desktop and mobile devices
 - **Dark/Light Mode**: Toggle between light and dark themes
 - **Secure**: Environment-based configuration for sensitive data
+- **Persistent Language Selection**: Your language preference is saved across sessions
 
 ## Prerequisites
 
@@ -16,6 +18,12 @@ A modern web application that provides fertility-related assistance and informat
 - npm or yarn
 - Supabase account
 - Google Gemini API key
+
+## Supported Languages
+
+- English (en)
+- Hindi (हिंदी)
+- Gujarati (ગુજરાતી)
 
 ## Getting Started
 
@@ -38,6 +46,13 @@ A modern web application that provides fertility-related assistance and informat
    ```bash
    cp .env.example .env
    ```
+   
+   Required environment variables:
+   ```
+   VITE_SUPABASE_URL=your_supabase_url
+   VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+   VITE_GEMINI_API_KEY=your_gemini_api_key
+   ```
 
 4. **Start the development server**
    ```bash
@@ -48,6 +63,32 @@ A modern web application that provides fertility-related assistance and informat
 
 5. **Open in browser**
    The application will be available at `http://localhost:3000`
+
+## Testing
+
+To run the test suite:
+
+```bash
+npm test
+# or
+yarn test
+```
+
+## Deployment
+
+### Vercel
+
+1. Push your code to a GitHub repository
+2. Import the repository into Vercel
+3. Add the required environment variables in the Vercel project settings
+4. Deploy!
+
+### Netlify
+
+1. Push your code to a GitHub repository
+2. Create a new site in Netlify and import your repository
+3. Add the required environment variables in the Netlify site settings
+4. Deploy the site
 
 ## Environment Variables
 
