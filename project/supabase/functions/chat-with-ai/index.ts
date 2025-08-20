@@ -20,7 +20,9 @@ interface ChatRequest {
 type LanguageCode = 'en' | 'hi' | 'gu';
 
 const SYSTEM_PROMPTS: Record<LanguageCode, string> = {
-  en: `You are FertilityCare AI, a supportive and knowledgeable fertility consultant assistant. Your role is to provide evidence-based information and guidance on fertility-related topics. Always respond in English.
+  en: `You are FertilityCare AI, a supportive and knowledgeable fertility consultant assistant. Your role is to provide evidence-based information and guidance on fertility-related topics. 
+
+LANGUAGE INSTRUCTION: You MUST respond in English ONLY. Never use any other language in your responses. Even if the user asks in another language, respond in English.
 
 ## Key Guidelines
 1. **Medical Disclaimer**: Always include a clear disclaimer that you are not a substitute for professional medical advice.
@@ -48,7 +50,9 @@ const SYSTEM_PROMPTS: Record<LanguageCode, string> = {
 
 Remember: Your role is to educate and support, not diagnose or treat. Always recommend professional consultation for personal medical advice.`,
 
-  hi: `आप फर्टिलिटीकेयर एआई हैं, एक सहायक और जानकार प्रजनन सलाहकार सहायक। आपका कार्य प्रजनन-संबंधित विषयों पर साक्ष्य-आधारित जानकारी और मार्गदर्शन प्रदान करना है। हमेशा हिंदी में उत्तर दें।
+  hi: `आप फर्टिलिटीकेयर एआई हैं, एक सहायक और जानकार प्रजनन सलाहकार सहायक। आपका कार्य प्रजनन-संबंधित विषयों पर साक्ष्य-आधारित जानकारी और मार्गदर्शन प्रदान करना है।
+
+भाषा निर्देश: आपको केवल हिंदी में ही उत्तर देना है। किसी भी स्थिति में अंग्रेजी या किसी अन्य भाषा का उपयोग न करें। यदि उपयोगकर्ता किसी अन्य भाषा में प्रश्न पूछे, तो भी आपको हिंदी में ही उत्तर देना है।
 
 ## मुख्य दिशानिर्देश
 1. **चिकित्सा अस्वीकरण**: हमेशा एक स्पष्ट अस्वीकरण शामिल करें कि आप पेशेवर चिकित्सा सलाह का विकल्प नहीं हैं।
@@ -76,7 +80,9 @@ Remember: Your role is to educate and support, not diagnose or treat. Always rec
 
 याद रखें: आपकी भूमिका शिक्षित करने और समर्थन करने की है, निदान या उपचार करने की नहीं। व्यक्तिगत चिकित्सा सलाह के लिए हमेशा पेशेवर परामर्श की सिफारिश करें।`,
 
-  gu: `તમે ફર્ટિલિટીકેર એઆઇ છો, એક સહાયક અને જાણકાર ફર્ટિલિટી સલાહકાર સહાયક. તમારી ભૂમિકા ફર્ટિલિટી-સંબંધિત વિષયો પર પુરાવા-આધારિત માહિતી અને માર્ગદર્શન પ્રદાન કરવાની છે. હંમેશા ગુજરાતીમાં જવાબ આપો.
+  gu: `તમે ફર્ટિલિટીકેર એઆઇ છો, એક સહાયક અને જાણકાર ફર્ટિલિટી સલાહકાર સહાયક. તમારી ભૂમિકા ફર્ટિલિટી-સંબંધિત વિષયો પર પુરાવા-આધારિત માહિતી અને માર્ગદર્શન પ્રદાન કરવાની છે.
+
+ભાષા સૂચના: તમારે ફક્ત ગુજરાતીમાં જ જવાબ આપવો જોઈએ. કોઈપણ પરિસ્થિતિમાં અંગ્રેજી અથવા અન્ય કોઈ ભાષાનો ઉપયોગ ન કરો. જો વપરાશકર્તા અન્ય ભાષામાં પ્રશ્ન પૂછે, તો પણ તમારે ફક્ત ગુજરાતીમાં જ જવાબ આપવો જોઈએ.
 
 ## મુખ્ય માર્ગદર્શિકાઓ
 1. **મેડિકલ ડિસ્ક્લેમર**: હંમેશા સ્પષ્ટ ડિસ્ક્લેમર શામેલ કરો કે તમે પ્રોફેશનલ મેડિકલ સલાહનો વિકલ્પ નથી.
@@ -185,24 +191,41 @@ Deno.serve(async (req) => {
     // Get the system prompt for the selected language (default to English if not found)
     const systemPrompt = SYSTEM_PROMPTS[language as LanguageCode] || SYSTEM_PROMPTS.en;
     
+    // Add language-specific instruction to the system prompt
+    const languageInstruction = language === 'en' 
+      ? 'IMPORTANT: You are a fertility expert. You MUST respond in English only, even if the user asks in another language. Never use any other language in your response.'
+      : language === 'hi' 
+        ? 'महत्वपूर्ण: आप एक प्रजनन विशेषज्ञ हैं। आपको केवल हिंदी में ही उत्तर देना है, भले ही उपयोगकर्ता किसी अन्य भाषा में पूछे। कृपया अपने उत्तर में किसी भी अन्य भाषा का उपयोग न करें। (IMPORTANT: You are a fertility expert. You MUST respond in Hindi only, even if the user asks in another language. Never use any other language in your response.)' 
+        : 'મહત્વપૂર્ણ: તમે ફર્ટિલિટી નિષ્ણાત છો. તમારે ફક્ત ગુજરાતીમાં જ જવાબ આપવો જોઈએ, ભલે વપરાશકર્તા કોઈપણ અન્ય ભાષામાં પૂછે. કૃપા કરીને તમારા જવાબમાં કોઈપણ અન્ય ભાષાનો ઉપયોગ ન કરો. (IMPORTANT: You are a fertility expert. You MUST respond in Gujarati only, even if the user asks in another language. Never use any other language in your response.)';
+
     // Prepare messages for Gemini API with system instruction
     const messages = [
       {
         role: 'user',
-        parts: [{ text: systemPrompt }]
+        parts: [{ 
+          text: `${systemPrompt}\n\n${languageInstruction}`
+        }]
       },
       {
         role: 'model',
-        parts: [{ text: 'I understand and will respond in the requested language.' }]
+        parts: [{ 
+          text: language === 'en' 
+            ? 'I understand I must respond in English only.' 
+            : language === 'hi' 
+              ? 'मैं समझ गया कि मुझे केवल हिंदी में उत्तर देना है।'
+              : 'હું સમજી ગયો છું કે મારે ફક્ત ગુજરાતીમાં જ જવાબ આપવો જોઈએ.'
+        }]
       },
       ...conversationHistory.map(msg => ({
         role: msg.role === 'assistant' ? 'model' : 'user',
-        parts: [{ text: msg.content }]
+        parts: [{ 
+          text: msg.content 
+        }]
       })),
       { 
         role: 'user', 
         parts: [{ 
-          text: `[${language}] ${message}` 
+          text: message 
         }] 
       }
     ];

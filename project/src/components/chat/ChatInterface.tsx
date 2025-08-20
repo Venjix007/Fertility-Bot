@@ -13,48 +13,118 @@ interface ChatInterfaceProps {
   onConversationCreated: (conversation: Conversation) => void;
 }
 
-// Define quick reply suggestions based on message content
-const getQuickReplies = (message: string): string[] => {
+// Define quick reply suggestions based on message content and language
+const getQuickReplies = (message: string, language: 'en' | 'hi' | 'gu' = 'en'): string[] => {
   const lowerMessage = message.toLowerCase();
-  
+
+  // Define all quick replies in all supported languages
+  const replies: Record<string, Record<string, string[]>> = {
+    'fertility': {
+      en: [
+        "What are common fertility tests?",
+        "When should we see a specialist?",
+        "What lifestyle changes can help?"
+      ],
+      hi: [
+        "सामान्य प्रजनन परीक्षण क्या हैं?",
+        "हमें विशेषज्ञ से कब मिलना चाहिए?",
+        "कौन से जीवनशैली परिवर्तन मदद कर सकते हैं?"
+      ],
+      gu: [
+        "સામાન્ય ફર્ટિલિટી ટેસ્ટ શું છે?",
+        "અમે સ્પેશિયલિસ્ટ પાસે ક્યારે જવું જોઈએ?",
+        "કયા જીવનશૈલીના ફેરફારો મદદ કરી શકે છે?"
+      ]
+    },
+    'cycle': {
+      en: [
+        "What's the best tracking method?",
+        "How to identify ovulation?",
+        "What if my cycle is irregular?"
+      ],
+      hi: [
+        "सबसे अच्छी ट्रैकिंग विधि क्या है?",
+        "ओव्यूलेशन की पहचान कैसे करें?",
+        "अगर मेरा चक्र अनियमित है तो क्या होगा?"
+      ],
+      gu: [
+        "શ્રેષ્ઠ ટ્રેકિંગ પદ્ધતિ કઈ છે?",
+        "ઓવ્યુલેશનની ઓળખ કેવી રીતે કરવી?",
+        "જો મારું ચક્ર અનિયમિત હોય તો શું?"
+      ]
+    },
+    'test': {
+      en: [
+        "Are these tests painful?",
+        "How accurate are the results?",
+        "What do the results mean?"
+      ],
+      hi: [
+        "क्या ये परीक्षण दर्दनाक हैं?",
+        "परिणाम कितने सटीक हैं?",
+        "परिणामों का क्या मतलब है?"
+      ],
+      gu: [
+        "શું આ ટેસ્ટમાં દુખાવો થાય છે?",
+        "પરિણામો કેટલા ચોક્કસ છે?",
+        "પરિણામોનો શું અર્થ થાય છે?"
+      ]
+    },
+    'partner': {
+      en: [
+        "How can we reduce stress?",
+        "What should we expect emotionally?",
+        "How to communicate better?"
+      ],
+      hi: [
+        "हम तनाव को कैसे कम कर सकते हैं?",
+        "भावनात्मक रूप से हमें क्या उम्मीद करनी चाहिए?",
+        "बेहतर संवाद कैसे करें?"
+      ],
+      gu: [
+        "અમે તણાવ કેવી રીતે ઘટાડી શકીએ?",
+        "ભાવનાત્મક રીતે અમારે શું અપેક્ષા રાખવી જોઈએ?",
+        "વધુ સારી રીતે કેવી રીતે વાતચીત કરવી?"
+      ]
+    },
+    'default': {
+      en: [
+        "Tell me more about fertility testing",
+        "How can I track my ovulation?",
+        "What lifestyle changes can help?"
+      ],
+      hi: [
+        "प्रजनन परीक्षण के बारे में और बताएं",
+        "मैं अपने ओव्यूलेशन को कैसे ट्रैक कर सकता हूं?",
+        "कौन से जीवनशैली परिवर्तन मदद कर सकते हैं?"
+      ],
+      gu: [
+        "ફર્ટિલિટી ટેસ્ટિંગ વિશે વધુ જણાવો",
+        "હું મારા ઓવ્યુલેશનને કેવી રીતે ટ્રેક કરી શકું?",
+        "કયા જીવનશૈલીના ફેરફારો મદદ કરી શકે છે?"
+      ]
+    }
+  };
+
+  // Determine which set of replies to use based on message content
   if (lowerMessage.includes('fertility assessment') || lowerMessage.includes('health indicators')) {
-    return [
-      "What are common fertility tests?",
-      "When should we see a specialist?",
-      "What lifestyle changes can help?"
-    ];
+    return replies.fertility[language] || replies.fertility.en;
   }
-  
+
   if (lowerMessage.includes('cycle') || lowerMessage.includes('tracking')) {
-    return [
-      "What's the best tracking method?",
-      "How to identify ovulation?",
-      "What if my cycle is irregular?"
-    ];
+    return replies.cycle[language] || replies.cycle.en;
   }
-  
+
   if (lowerMessage.includes('test') || lowerMessage.includes('diagnostic')) {
-    return [
-      "Are these tests painful?",
-      "How accurate are the results?",
-      "What do the results mean?"
-    ];
+    return replies.test[language] || replies.test.en;
   }
-  
+
   if (lowerMessage.includes('partner') || lowerMessage.includes('support')) {
-    return [
-      "How can we reduce stress?",
-      "What should we expect emotionally?",
-      "How to communicate better?"
-    ];
+    return replies.partner[language] || replies.partner.en;
   }
-  
-  // Default quick replies
-  return [
-    "Tell me more about fertility testing",
-    "How can I track my ovulation?",
-    "What lifestyle changes can help?"
-  ];
+
+  // Return default replies in the selected language
+  return replies.default[language] || replies.default.en;
 };
 
 export function ChatInterface({ conversation, onConversationCreated }: ChatInterfaceProps): JSX.Element {
@@ -69,6 +139,10 @@ export function ChatInterface({ conversation, onConversationCreated }: ChatInter
   const { user } = useAuth();
   const { language } = useLanguage();
 
+  if (!user) {
+    return <div>Please sign in to use the chat</div>;
+  }
+
   // More robust scroll to bottom function
   const scrollToBottom = useCallback(() => {
     const scrollToBottomImmediate = () => {
@@ -80,7 +154,7 @@ export function ChatInterface({ conversation, onConversationCreated }: ChatInter
 
     // Immediate scroll
     scrollToBottomImmediate();
-    
+
     // Also scroll after a small delay to ensure DOM updates
     setTimeout(scrollToBottomImmediate, 50);
     setTimeout(scrollToBottomImmediate, 200);
@@ -105,6 +179,21 @@ export function ChatInterface({ conversation, onConversationCreated }: ChatInter
     }
   }, [conversation]);
 
+  // Generate suggested replies when messages or language changes
+  useEffect(() => {
+    if (messages.length > 0) {
+      const lastMessage = messages[messages.length - 1];
+      if (lastMessage.role === 'assistant' && lastMessage.content) {
+        const replies = getQuickReplies(lastMessage.content, language);
+        setSuggestedReplies(replies);
+      } else {
+        setSuggestedReplies([]);
+      }
+    } else {
+      setSuggestedReplies([]);
+    }
+  }, [messages, language]);
+
   const loadMessages = async () => {
     if (!conversation) return;
 
@@ -128,10 +217,10 @@ export function ChatInterface({ conversation, onConversationCreated }: ChatInter
 
   const handleQuickReply = async (reply: string) => {
     if (loading || isTyping || sendingRef.current) return;
-    
+
     // Clear any existing suggested replies
     setSuggestedReplies([]);
-    
+
     // Process the message through the normal send flow
     await handleSendMessage(reply);
   };
@@ -146,147 +235,121 @@ export function ChatInterface({ conversation, onConversationCreated }: ChatInter
     setSuggestedReplies([]);
     
     try {
-      // Create a new message object
-      const newMessage: Omit<Message, 'id' | 'created_at'> = {
-        conversation_id: conversation?.id || '',
-        content,
-        role: 'user',
-      };
 
-      // Handle conversation creation if needed
       let currentConversation = conversation;
+
+      // If no conversation exists, create one first
       if (!currentConversation) {
-        const { data: newConversation, error: convError } = await supabase
+        const { data: newConversation, error: createError } = await supabase
           .from('conversations')
-          .insert([{ 
-            user_id: user.id, 
-            title: content.length > 50 ? `${content.substring(0, 47)}...` : content,
-            created_at: new Date().toISOString()
-          }])
+          .insert({ user_id: user.id })
           .select()
           .single();
 
-        if (convError) {
-          console.error('Error creating conversation:', convError);
-          throw new Error('Failed to start a new conversation');
+        if (createError || !newConversation) {
+          console.error('Error creating conversation:', createError);
+          throw new Error('Failed to start a new conversation.');
         }
-        
         currentConversation = newConversation;
         onConversationCreated(newConversation);
-        newMessage.conversation_id = newConversation.id;
       }
 
-      // Create a temporary user message for immediate UI feedback
-      const tempUserMessage: Message = {
-        ...newMessage,
+      if (!currentConversation) {
+        throw new Error('Conversation could not be established.');
+      }
+
+      // Add user message to the UI immediately
+      const userMessage: Message = {
         id: `temp-user-${Date.now()}`,
+        conversation_id: currentConversation.id,
+        content,
+        role: 'user',
         created_at: new Date().toISOString(),
       };
-      
-      // Update UI with the user's message immediately
+
+      setMessages(prev => [...prev, userMessage]);
+      setIsTyping(true);
+
+      // Save user message to DB (don't wait for it)
+      supabase.from('messages').insert({ conversation_id: currentConversation.id, content, role: 'user' }).then(({ error }) => {
+        if (error) console.error('Error saving user message:', error);
+      });
+
+      if (!currentConversation) {
+        throw new Error('Conversation could not be established.');
+      }
+      const finalConversation = currentConversation;
+
+      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat-with-ai`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`,
+        },
+        body: JSON.stringify({
+          conversationId: finalConversation.id,
+          message: content,
+          language: language, // Include the selected language
+          conversationHistory: messages
+            .filter(m => m.role === 'user' || m.role === 'assistant')
+            .map(m => ({ role: m.role, content: m.content }))
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to get AI response');
+      }
+
+      const { response: aiResponse } = await response.json();
+
+      // Stop typing indicator
+      setIsTyping(false);
+
+      const tempAiMessage: Message = {
+        id: `temp-ai-${Date.now()}`,
+        conversation_id: finalConversation.id,
+        content: aiResponse,
+        role: 'assistant',
+        created_at: new Date().toISOString(),
+      };
+
+      // Add AI message and trigger scroll
       setMessages(prev => {
-        const newMessages = [...prev, tempUserMessage];
+        const newMessages = [...prev, tempAiMessage];
         // Trigger scroll after state update
         setTimeout(() => scrollToBottom(), 0);
         return newMessages;
       });
-      
+
       try {
-        // Save the message to the database
-        const { data: savedMessage, error: messageError } = await supabase
+        // Save the AI message to the database
+        const aiMessage: Omit<Message, 'id' | 'created_at'> = {
+          conversation_id: finalConversation.id,
+          content: aiResponse,
+          role: 'assistant'
+        };
+
+        const { data: savedAiMessage, error: aiMessageError } = await supabase
           .from('messages')
-          .insert([newMessage])
+          .insert([aiMessage])
           .select()
           .single();
 
-        if (messageError || !savedMessage) {
-          console.error('Error saving message:', messageError);
-          throw messageError || new Error('Failed to save message');
+        if (aiMessageError || !savedAiMessage) {
+          console.error('Error saving AI message:', aiMessageError);
+          throw aiMessageError || new Error('Failed to save AI message');
         }
-        
-        // Replace the temporary message with the saved one
-        setMessages(prev => 
-          prev.map(msg => 
-            msg.id === tempUserMessage.id 
-              ? { ...savedMessage, created_at: savedMessage.created_at }
+
+        // Replace the temporary AI message with the saved one
+        setMessages(prev =>
+          prev.map(msg =>
+            msg.id === tempAiMessage.id
+              ? { ...savedAiMessage, created_at: savedAiMessage.created_at }
               : msg
           )
         );
-        
-        // Start typing indicator
-        setIsTyping(true);
-        
-        // Get AI response
-        if (!currentConversation) {
-          throw new Error('No active conversation');
-        }
-
-        const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat-with-ai`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`,
-          },
-          body: JSON.stringify({
-            conversationId: currentConversation.id,
-            message: content,
-            language: language, // Include the selected language
-            conversationHistory: messages
-              .filter(m => m.role === 'user' || m.role === 'assistant')
-              .map(m => ({ role: m.role, content: m.content }))
-          }),
-        });
-
-        if (!response.ok) {
-          throw new Error('Failed to get AI response');
-        }
-
-        const { response: aiResponse } = await response.json();
-
-        // Stop typing indicator
-        setIsTyping(false);
-
-        const tempAiMessage: Message = {
-          id: `temp-ai-${Date.now()}`,
-          conversation_id: currentConversation.id,
-          content: aiResponse,
-          role: 'assistant',
-          created_at: new Date().toISOString(),
-        };
-        
-        // Add AI message and trigger scroll
-        setMessages(prev => {
-          const newMessages = [...prev, tempAiMessage];
-          // Trigger scroll after state update
-          setTimeout(() => scrollToBottom(), 0);
-          return newMessages;
-        });
-        
-        const aiMessage: Omit<Message, 'id' | 'created_at'> = {
-          conversation_id: currentConversation.id,
-          content: aiResponse,
-          role: 'assistant',
-        };
-
-        const { error: aiMessageError } = await supabase
-          .from('messages')
-          .insert([aiMessage]);
-
-        if (aiMessageError) {
-          console.error('Error saving AI message:', aiMessageError);
-          setMessages(prev => prev.filter(m => m.id !== tempAiMessage.id));
-          throw aiMessageError;
-        }
-        
-        // Set suggested replies after AI response
-        setSuggestedReplies(getQuickReplies(aiResponse));
-        
       } catch (err) {
-        console.error('Error in message sending flow:', err);
-        setError('Failed to process your message. Please try again.');
-        setIsTyping(false);
-        // Remove the temporary user message on error
-        setMessages(prev => prev.filter(m => m.id !== tempUserMessage.id));
+        console.error('Error saving AI message:', err);
       }
     } catch (err) {
       console.error('Error in message handling:', err);
@@ -311,7 +374,7 @@ export function ChatInterface({ conversation, onConversationCreated }: ChatInter
   return (
     <div className="flex flex-col h-full">
       {/* Messages Area */}
-      <div 
+      <div
         ref={messagesContainerRef}
         className="flex-1 overflow-y-auto scroll-smooth"
       >
@@ -333,13 +396,13 @@ export function ChatInterface({ conversation, onConversationCreated }: ChatInter
         ) : (
           <div className="max-w-4xl mx-auto w-full px-4 py-6 space-y-6">
             {messages.map((message) => (
-              <MessageBubble 
-                key={message.id} 
-                message={message} 
+              <MessageBubble
+                key={message.id}
+                message={message}
                 isOwnMessage={message.role === 'user' || !!(user && 'sender_id' in message && message.sender_id === user.id)}
               />
             ))}
-            
+
             {isTyping && (
               <div className="flex items-start space-x-3">
                 <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-neutral-100 to-neutral-50 dark:from-neutral-700/50 dark:to-neutral-800/50 flex items-center justify-center flex-shrink-0 shadow-sm">
@@ -375,7 +438,7 @@ export function ChatInterface({ conversation, onConversationCreated }: ChatInter
             <button
               key={index}
               onClick={() => handleQuickReply(reply)}
-              className="px-4 py-2 text-sm bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 hover:bg-neutral-50 dark:hover:bg-neutral-700/50 rounded-xl transition-all duration-200 shadow-sm hover:shadow"
+              className="px-4 py-2 text-sm bg-pink-50 dark:bg-pink-900/20 border border-pink-200 dark:border-pink-800 text-pink-700 dark:text-pink-200 hover:bg-pink-100 dark:hover:bg-pink-800/30 rounded-xl transition-all duration-200 shadow-sm hover:shadow"
               disabled={loading || isTyping || sendingRef.current}
             >
               {reply}
@@ -386,8 +449,8 @@ export function ChatInterface({ conversation, onConversationCreated }: ChatInter
 
       {/* Input Area */}
       <div className="border-t border-neutral-100 dark:border-neutral-700/50 p-4 bg-white/50 dark:bg-neutral-800/30 backdrop-blur-sm">
-        <ChatInput 
-          onSendMessage={handleSendMessage} 
+        <ChatInput
+          onSendMessage={handleSendMessage}
           disabled={loading || isTyping || sendingRef.current}
         />
       </div>

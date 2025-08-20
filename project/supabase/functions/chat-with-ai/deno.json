@@ -1,9 +1,13 @@
 {
   "compilerOptions": {
     "allowJs": true,
-    "lib": ["deno.window"],
+    "lib": ["deno.window", "dom"],
     "strict": true,
-    "target": "esnext"
+    "target": "esnext",
+    "types": ["node"]
+  },
+  "imports": {
+    "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@2"
   },
   "tasks": {
     "start": "deno run --allow-net --allow-env --allow-read --allow-write index.ts",
